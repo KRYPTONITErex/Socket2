@@ -46,6 +46,17 @@
         .output, .feedback {
             text-align: left;
             font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .feedback {
+            margin-top: 10px;  /* Adjusted margin */
+            color: #ccc;
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
         }
     
         input[type="text"] {
@@ -82,19 +93,17 @@
     </style>
 <body>
 
-
     <div class="app">
         <h2>TESTING CHAT App</h2>
         <div class="chat-window" id="chat-window">
             <div class="output" id="output"></div>
-            <!-- <div id="output" style="height: 300px; overflow-y: scroll; border: 1px solid black;"></div>
-            </div> -->
-            <div class="feedback" id="feedback"></div>
-
         </div>
-        <input type="text" placeholder="Name" id="name">
-        <input type="text" placeholder="Message" id="message">
-        <button class="send" id="send">SEND</button>
+        <div class="feedback" id="feedback"></div>  <!-- Feedback moved outside the chat window -->
+        <div class="input-container">
+            <input type="text" placeholder="Name" id="name">
+            <input type="text" placeholder="Message" id="message">
+            <button class="send" id="send">SEND</button>
+        </div>
     </div>
 
 
