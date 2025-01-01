@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js" integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+" crossorigin="anonymous"></script></head>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    
+        .app {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            text-align: center;
+        }
+    
+        h1, h2 {
+            margin: 0 20px 20px;
+        }
+
+        .chat-window {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+    
+        .output, .feedback {
+            text-align: left;
+            font-size: 14px;
+        }
+    
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            outline: none;
+        }
+    
+        input[type="text"]::placeholder {
+            color: #ccc;
+        }
+    
+        button {
+            background: #9ffc25;
+            color: #05233d;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    
+        button:hover {
+            background: #044c84;
+            font-weight: bold;
+            color: #fff;
+            transition: all 0.5s;
+            font-size: 16px;
+        }
+    </style>
+<body>
+
+
+    <div class="app">
+        <h2>TESTING CHAT App</h2>
+        <div class="chat-window" id="chat-window">
+            <div class="output" id="output"></div>
+            <!-- <div id="output" style="height: 300px; overflow-y: scroll; border: 1px solid black;"></div>
+            </div> -->
+            <div class="feedback" id="feedback"></div>
+
+        </div>
+        <input type="text" placeholder="Name" id="name">
+        <input type="text" placeholder="Message" id="message">
+        <button class="send" id="send">SEND</button>
+    </div>
+
+
+    <script>
+        const socket = io('http://localhost:5600');
+
+        let output = document.getElementById('output');
+        let feedback = document.getElementById('feedback');
+        let message = document.getElementById('message');
+        let name = document.getElementById('name');
+        let send = document.getElementById('send');
+        let chatWindow = document.getElementById('chat-window');
+
+       // Function to scroll to the bottom of the chat window
+       function scrollToBottom() {
+            chatWindow.scrollTop = chatWindow.scrollHeight;  // Corrected element reference
+        }
+
+        send.addEventListener('click',()=>{
+            // console.log(name.value,message.value);
+            let data = {
+                name:name.value,
+                message:message.value
+            }
+            socket.emit('chat', data)
+        })
+
+        //enter event
+        document.addEventListener('keydown',(e)=>{
+            if(e.keyCode === 13){
+            send.click();
+            }
+        })
+
+        message.addEventListener('keypress',()=>{
+            socket.emit('typing',name.value)
+        })
+
+        //listen event
+        socket.on('chat',(data)=>{
+            // console.log(data);
+            output.innerHTML += `<p><strong>${data.name}</strong>: ${data.message}</p>`;
+            message.value = '';
+            feedback.innerHTML = '';
+            scrollToBottom();
+        })
+
+        socket.on('typing',(name)=>{
+            feedback.innerHTML = `<p><em>${name} is typing now ... </em></p>`
+            setTimeout(()=>{
+                feedback.innerHTML = '';
+            },4500)
+        })
+      
+
+    </script>
+    
+</body>
+</html>
+
